@@ -1,0 +1,38 @@
+version: '3'
+services:
+  prom:
+    image: prom/prometheus
+    restart: always
+    ports:
+      - 9090:9090
+    environment:
+      - config.file=/etc/prometheus/prometheus.yml
+      - storage.tsdb.path=/prometheus
+      - web.console.libraries=/usr/share/prometheus/console_libraries
+      - web.console.templates=/usr/share/prometheus/consoles
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prom-data:/prometheus
+
+  bbexp:
+    image: prom/blackbox-exporter
+    restart: always
+    ports:
+      - 9115:9115
+    environment:
+      - config.file="/config.yml"
+    volumes:
+      - ./blackbox-exporter.yml:/config.yml
+
+  graf:
+    image: grafana/grafana
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+      - graf-data:/var/lib/grafana
+
+volumes:
+  prom-data:
+  graf-data:
